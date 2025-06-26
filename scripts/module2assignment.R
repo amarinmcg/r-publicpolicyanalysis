@@ -15,3 +15,15 @@ first_ten_unis
 #Extract the last 3 columns from the data frame
 last_three_columns <- adm_df[,66:68]
 last_three_columns
+
+# `ENRLW` for the institution at row 1,337 in the data
+adm_df_ENRLW <- adm_df$ENRLW[1337]
+adm_df_ENRLW
+
+# Reported an `NA` value for either admissions for men **or** admissions for women
+adm_df_NAMW <- count(adm_df[is.na(adm_df$ADMSSNM) | is.na(adm_df$ADMSSNW), ])
+adm_df_NAMW
+
+# Average number of men who were admitted in this data set
+avg_M_adm <- mean(adm_df[!is.na(adm_df$ADMSSNM), c('ADMSSNM') ])
+avg_M_adm
