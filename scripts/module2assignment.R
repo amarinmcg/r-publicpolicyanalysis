@@ -1,10 +1,10 @@
 #Import data
 adm_df <- read.csv("data/adm2020.csv")
 
-#Check structure of dataframe
+#Check structure of data frame
 colnames(adm_df)
 
-#Extract the first row (observation) from the dataframe
+#Extract the first row (observation) from the data frame
 first_row <- adm_df[1,]
 first_row
 
