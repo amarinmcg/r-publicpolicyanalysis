@@ -27,3 +27,19 @@ adm_df_NAMW
 # Average number of men who were admitted in this data set
 avg_M_adm <- mean(adm_df[!is.na(adm_df$ADMSSNM), c('ADMSSNM') ])
 avg_M_adm
+
+# Pulling out all columns except first and third on
+some_missing_columns <- adm_df[,c(-1, -3)]
+some_missing_columns
+
+# A vector of numbers between 1-10
+print(1:10)
+
+# A vector of negative numbers between 1-10
+print(-1:-10)
+
+#Sum function to add to a vector of number
+sum(adm_df$APPLCN)
+
+# Sum function for two columns - vectors
+sum(adm_df$APPLCNM) / sum(adm_df$APPLCNW)

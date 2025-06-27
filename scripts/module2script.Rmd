@@ -1,0 +1,98 @@
+---
+title: "Module 2 Data Analysis - Data Analysis of Public Policy"
+output: html_document
+---
+
+Importing Data
+
+```{r}
+setwd("/Users/mari/Desktop/r-publicpolicyanalysis")
+admiss_df <- read.csv("data/adm2020.csv")
+admiss_df
+```
+
+How many student applications across the schools were made?
+
+```{r}
+sum(admiss_df$APPLCN)
+```
+
+This year we have over 11 million applications in total! Wow! We can also look at the ration of men to women by calculating those sums independently and then dividing. The number of applicants who identified as male are stored in the `APPLCNM` while the number of applicants who identified as female as stored in column `APPLCNW`. In this dataset there is only a binary gender distinction.
+
+```{r}
+sum(admiss_df$APPLCNM) / sum(admiss_df$APPLCNW)
+```
+
+Suprised that male applicants were fewer than female applicants overall. By dividing these sums, we wee that for every 100 female applications, there are only 74 male applications. Are males more selective -- they apply to fewer schools -- than females? Are women more likely to apply to college in the United States and, if so, does this translate into more acceptances too?
+
+```{r}
+# Calculate the rations of men to women across three variables of application, admission, and enrollment
+
+application_ratio <- sum(admiss_df$APPLCNM) / sum(admiss_df$APPLCNW)
+admissions_ratio <- sum(admiss_df$ADMSSNM) / sum(admiss_df$ADMSSNW)
+enrollment_ratio <- sum(admiss_df$ENRLM) / sum(admiss_df$ENRLW)
+
+#paste0 allows to print into one string
+paste0("The application ratio was ", application_ratio, " while the admissions ratio was ", admissions_ratio, 
+       " and the enrollment ration was ", 
+       enrollment_ratio)
+```
+
+## Selecting with Boolean Masks
+
+Our first step should be to consider where there might be missing values. We can use the `is.na` function to look through a column of data to see what is reported as `NA`
+
+```{r}
+# Look as to whether there are any male reports missing from the admissions column
+
+is.na(admiss_df$ADMSSNM)
+```
+
+**Boolean masking** is a. vector of `TRUE` or `FALSE` values that overall on top of our data through selecting. The result is that the selection returns only those observations for which there was a `TRUE` value, and does not return the `FALSE` values.
+
+```{r}
+admiss_df[is.na(admiss_df$ADMSSNM), ]
+```
+
+```{r}
+#Let's count the number of schools while reported no admissions from males or females
+
+paste0("The number of schools with NA male admissions was ", nrow(admiss_df[is.na(admiss_df$ADMSSNM), ]), " and the number of schools with NA female admissions was ", nrow(admiss_df[is.na(admiss_df$ADMSSNW),]))
+```
+
+So some schools have `NA` reported data for males, and some for females. I wonder how many of these schools report and `NA` for both men and women? The power of the boolean masks is that we can combine these two queries through logical operators.
+
+```{r}
+# We can modify our code to use two conditions, the first a boolean mask of missing entries for male, and the second for female, and we can '&' these together to get a mask which is only true for schools that meet both criteria
+
+missing_schools <- admiss_df[is.na(admiss_df$ADMSSNM) & is.na(admiss_df$ADMSSNW), ]
+
+paste0("We have ", nrow(missing_schools), " schools which have reported NA for both men and women.")
+```
+
+So, we know we have 24 schools that have reported missing data for both men and women, which means that we have 68 schools which have reported missing data for men alone, and 84 schools which have reported missing data for women alone.
+
+For the purpose of this lecture though, I'm going to exclude observations -- individual schools -- if htey have missing data in any of the six variables we are interested in.
+
+```{r}
+# We have to negate that (so we get only data which is not missing, '!' - negate symbol) and combine all of the masks together with an AND condition.
+
+cleaned_df <- admiss_df[!(is.na(admiss_df$APPLCNM)) &
+          !(is.na(admiss_df$APPLCNW)) &
+          !(is.na(admiss_df$ADMSSNM)) &
+          !(is.na(admiss_df$ADMSSNW)) &
+          !(is.na(admiss_df$ENRLM)) &
+          !(is.na(admiss_df$ENRLW)), ]
+
+paste0("We have ", nrow(cleaned_df), " schools in our cleaned dataset.")
+```
+
+It's important to know what is going on when you are cleaning your data. Now, let's answer our question on whether the ratios of these three variables - applications, admissions, and enrollment - differ with respect to sex in our now cleaned and smaller dataset.
+
+```{r}
+application_ratio <- sum(cleaned_df$APPLCNM) / sum(cleaned_df$APPLCNW)
+admissions_ratio <- sum(cleaned_df$ADMSSNM) / sum(cleaned_df$ADMSSNW)
+enrollment_ratio <- sum(cleaned_df$ENRLM) / sum(cleaned_df$ENRLW)
+```
+
+So in this case, we see that there was a male to female ratio of `r application_ratio` for applications, an admissions ratio of `r admissions_ratio`, and enrollment ratio of `r enrollment_ratio`.
