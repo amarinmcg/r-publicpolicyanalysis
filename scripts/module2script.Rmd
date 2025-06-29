@@ -48,7 +48,7 @@ Our first step should be to consider where there might be missing values. We can
 is.na(admiss_df$ADMSSNM)
 ```
 
-**Boolean masking** is a. vector of `TRUE` or `FALSE` values that overall on top of our data through selecting. The result is that the selection returns only those observations for which there was a `TRUE` value, and does not return the `FALSE` values.
+**Boolean masking** is a vector of `TRUE` or `FALSE` values that overall on top of our data through selecting. The result is that the selection returns only those observations for which there was a `TRUE` value, and does not return the `FALSE` values.
 
 ```{r}
 admiss_df[is.na(admiss_df$ADMSSNM), ]
@@ -72,7 +72,7 @@ paste0("We have ", nrow(missing_schools), " schools which have reported NA for b
 
 So, we know we have 24 schools that have reported missing data for both men and women, which means that we have 68 schools which have reported missing data for men alone, and 84 schools which have reported missing data for women alone.
 
-For the purpose of this lecture though, I'm going to exclude observations -- individual schools -- if htey have missing data in any of the six variables we are interested in.
+For the purpose of this lecture though, I'm going to exclude observations -- individual schools -- if they have missing data in any of the six variables we are interested in.
 
 ```{r}
 # We have to negate that (so we get only data which is not missing, '!' - negate symbol) and combine all of the masks together with an AND condition.
